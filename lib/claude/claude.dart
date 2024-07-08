@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_test_playground/claude/bottom_nav.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -10,7 +11,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   late ScrollController _scrollController;
-  final double _itemHeight = 500; // Adjust this value based on your design
+  late double _itemHeight; // Adjust this value based on your design
   int _currentIndex = 0;
 
   @override
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
       });
       _scrollController.animateTo(
         index * _itemHeight,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     }
@@ -47,6 +48,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    _itemHeight = MediaQuery.of(context).size.height * 0.7;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -74,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                 itemCount: 8,
                 itemBuilder: (context, index) {
                   return AnimatedOpacity(
-                    duration: Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 300),
                     opacity: _currentIndex == index ? 1.0 : 0.5,
                     child: SizedBox(
                       height: _itemHeight,
@@ -92,30 +94,9 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        onTap: _onItemTapped,
+      bottomNavigationBar: BottomNavigation(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
       ),
     );
   }
@@ -164,9 +145,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget statusBar() {
     return Container(
-      height: 50,
+      height: 100,
       color: Colors.grey[200],
-      child: Center(child: Text('Status Bar Placeholder')),
+      child: const Center(child: Text('Status Bar Placeholder')),
     );
   }
 }
