@@ -41,12 +41,13 @@ class _HomePageState extends State<HomePage> {
         'assets/images/pic_6.jpeg',
         'assets/images/pic_7.jpeg',
       ],
-      videoUrl: 'assets/videos/vid_2.mp4',
+      // videoUrl: 'assets/videos/vid_2.mp4',
     ),
     Location(
       title: 'Hokkaido Ramen Santouka',
       subtitle: 'Santouka',
       distance: '80 meters',
+      videoUrl: 'assets/videos/vid_2.mp4',
       imagePaths: [
         'assets/images/pic_1.jpeg',
         'assets/images/pic_2.jpeg',

@@ -1,5 +1,27 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
+import 'package:flutter_test_playground/claude/bottom_nav.dart';
+
+class Location {
+  final String title;
+  final String subtitle;
+  final String distance;
+  final List<String> imagePaths;
+  final bool isLiked;
+  final bool isSaved;
+  final String description;
+  final String type;
+
+  Location({
+    required this.title,
+    required this.subtitle,
+    required this.distance,
+    required this.imagePaths,
+    required this.isLiked,
+    required this.isSaved,
+    required this.description,
+    required this.type,
+  });
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,14 +31,100 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final ScrollController _scrollController = ScrollController();
+  int _selectedIndex = 0;
+  late ScrollController _scrollController;
   late double _itemHeight;
-  double _scrollOffset = 0.0;
+  int _currentIndex = 0;
+
+  final List<Location> _locations = [
+    Location(
+      title: 'Hokkaido Ramen Santouka',
+      subtitle: 'Santouka',
+      distance: '800 meters',
+      imagePaths: [
+        'assets/images/pic_1.jpeg',
+        'assets/images/pic_2.jpeg',
+        'assets/images/pic_3.jpeg',
+      ],
+      isLiked: true,
+      isSaved: false,
+      description: 'Authentic Japanese ramen with rich, flavorful broth',
+      type: 'Restaurant',
+    ),
+    Location(
+      title: 'Sushi Roku',
+      subtitle: 'Japanese Cuisine',
+      distance: '1.2 km',
+      imagePaths: [
+        'assets/images/pic_4.jpeg',
+        'assets/images/pic_5.jpeg',
+      ],
+      isLiked: true,
+      isSaved: false,
+      description: 'Authentic Japanese ramen with rich, flavorful broth',
+      type: 'Restaurant',
+    ),
+    Location(
+      title: 'Hokkaido Ramen Santouka',
+      subtitle: 'Santouka',
+      distance: '800 meters',
+      imagePaths: [
+        'assets/images/pic_6.jpeg',
+        'assets/images/pic_7.jpeg',
+        'assets/images/pic_8.jpeg',
+      ],
+      isLiked: true,
+      isSaved: false,
+      description: 'Authentic Japanese ramen with rich, flavorful broth',
+      type: 'Restaurant',
+    ),
+    Location(
+      title: 'Hokkaido Ramen Santouka',
+      subtitle: 'Santouka',
+      distance: '800 meters',
+      imagePaths: [
+        'assets/images/pic_9.jpeg',
+        'assets/images/pic_10.jpeg',
+        'assets/images/pic_11.jpeg',
+      ],
+      isLiked: true,
+      isSaved: false,
+      description: 'Authentic Japanese ramen with rich, flavorful broth',
+      type: 'Restaurant',
+    ),
+    Location(
+      title: 'Hokkaido Ramen Santouka',
+      subtitle: 'Santouka',
+      distance: '800 meters',
+      imagePaths: [
+        'assets/images/pic_12.jpeg',
+        'assets/images/pic_13.jpeg',
+        'assets/images/pic_14.jpeg',
+      ],
+      isLiked: true,
+      isSaved: false,
+      description: 'Authentic Japanese ramen with rich, flavorful broth',
+      type: 'Restaurant',
+    ),
+    Location(
+      title: 'Hokkaido Ramen Santouka',
+      subtitle: 'Santouka',
+      distance: '800 meters',
+      imagePaths: [
+        'assets/images/pic_15.jpeg',
+        'assets/images/pic_16.jpeg',
+      ],
+      isLiked: true,
+      isSaved: false,
+      description: 'Authentic Japanese ramen with rich, flavorful broth',
+      type: 'Restaurant',
+    ),
+  ];
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
+    _scrollController = ScrollController()..addListener(_scrollListener);
   }
 
   @override
@@ -25,159 +133,42 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  void _onScroll() {
-    setState(() {
-      _scrollOffset = _scrollController.offset;
-    });
+  void _scrollListener() {
+    int index = (_scrollController.offset / _itemHeight).round();
+    if (index != _currentIndex) {
+      setState(() => _currentIndex = index);
+      _animateToIndex(index);
+    }
+  }
+
+  void _animateToIndex(int index) {
+    _scrollController.animateTo(
+      index * _itemHeight,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() => _selectedIndex = index);
   }
 
   @override
   Widget build(BuildContext context) {
-    _itemHeight =
-        MediaQuery.of(context).size.height * 0.9; // 90% of screen height
+    _itemHeight = MediaQuery.of(context).size.height * 0.65;
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             _buildHeader(),
             _buildStatusBar(),
-            Expanded(
-              child: CustomScrollView(
-                controller: _scrollController,
-                physics: CustomSnapScrollPhysics(itemHeight: _itemHeight),
-                slivers: [
-                  SliverPadding(
-                    padding: EdgeInsets.only(
-                        top: 8), // Small margin above first item
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          return _buildLocationCard(index);
-                        },
-                        childCount: 10, // Adjust based on your data
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            Expanded(child: _buildLocationList()),
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
-    );
-  }
-
-  Widget _buildLocationCard(int index) {
-    final itemPosition = index * _itemHeight;
-    final difference = (_scrollOffset - itemPosition).abs();
-    final percentVisible = 1 - (difference / _itemHeight).clamp(0.0, 1.0);
-    final scale = 0.8 + (0.2 * percentVisible);
-    final opacity = 0.6 + (0.4 * percentVisible);
-
-    return SizedBox(
-      height: _itemHeight,
-      child: Transform.scale(
-        scale: scale,
-        alignment: Alignment.topCenter,
-        child: Opacity(
-          opacity: opacity,
-          child: Card(
-            elevation: 8 * percentVisible,
-            margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: ClipRRect(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(20)),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.asset(
-                          'assets/images/home_pic_${index % 4 + 1}.jpeg',
-                          fit: BoxFit.cover,
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.7)
-                                ],
-                              ),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 16, horizontal: 16),
-                            child: Text(
-                              'Location ${index + 1}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Subtitle for location ${index + 1}',
-                          style:
-                              TextStyle(fontSize: 18, color: Colors.grey[700]),
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(Icons.location_on,
-                                size: 16, color: Colors.blue),
-                            SizedBox(width: 4),
-                            Text(
-                              '${(index + 1) * 100} meters',
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.blue),
-                            ),
-                          ],
-                        ),
-                        Spacer(),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: Text('Explore'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+      bottomNavigationBar: BottomNavigation(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
       ),
     );
   }
@@ -203,66 +194,101 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildStatusBar() {
     return Container(
-      height: 50,
+      height: 100,
       color: Colors.grey[200],
       child: const Center(child: Text('Status Bar Placeholder')),
     );
   }
 
-  Widget _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border), label: 'Favorites'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline), label: 'Profile'),
-      ],
-      currentIndex: 0,
-      selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.grey,
-      showUnselectedLabels: true,
-      onTap: (index) {
-        // Handle navigation
-      },
+  Widget _buildLocationList() {
+    return ListView.builder(
+      controller: _scrollController,
+      itemCount: _locations.length,
+      itemBuilder: (context, index) => _buildLocationItem(index),
     );
   }
-}
 
-class CustomSnapScrollPhysics extends ScrollPhysics {
-  final double itemHeight;
-
-  const CustomSnapScrollPhysics(
-      {required this.itemHeight, ScrollPhysics? parent})
-      : super(parent: parent);
-
-  @override
-  CustomSnapScrollPhysics applyTo(ScrollPhysics? ancestor) {
-    return CustomSnapScrollPhysics(
-        itemHeight: itemHeight, parent: buildParent(ancestor));
+  Widget _buildLocationItem(int index) {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 300),
+      opacity: _currentIndex == index ? 1.0 : 0.5,
+      child: SizedBox(
+        height: _itemHeight,
+        child: _buildLocationCard(_locations[index]),
+      ),
+    );
   }
 
-  @override
-  Simulation? createBallisticSimulation(
-      ScrollMetrics position, double velocity) {
-    final tolerance = this.tolerance;
-    final target = _getTargetPixels(position, tolerance, velocity);
-    if (target != position.pixels) {
-      return ScrollSpringSimulation(spring, position.pixels, target, velocity,
-          tolerance: tolerance);
-    }
-    return null;
+  Widget _buildLocationCard(Location location) {
+    return Card(
+      margin: const EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 7,
+            child: _buildImageCarousel(location.imagePaths),
+          ),
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    location.title,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(location.subtitle),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on, size: 16),
+                      Text(location.distance),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        location.isLiked
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: location.isLiked ? Colors.red : null,
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        location.isSaved
+                            ? Icons.bookmark
+                            : Icons.bookmark_border,
+                        color: location.isSaved ? Colors.blue : null,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    location.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  double _getTargetPixels(
-      ScrollMetrics position, Tolerance tolerance, double velocity) {
-    double page = position.pixels / itemHeight;
-    if (velocity < -tolerance.velocity) {
-      page -= 0.5;
-    } else if (velocity > tolerance.velocity) {
-      page += 0.5;
-    }
-    return (page.round() * itemHeight).toDouble();
+  Widget _buildImageCarousel(List<String> imagePaths) {
+    return PageView.builder(
+      itemCount: imagePaths.length,
+      itemBuilder: (context, index) {
+        return Image.asset(
+          imagePaths[index],
+          fit: BoxFit.cover,
+        );
+      },
+    );
   }
 }

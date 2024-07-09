@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'claude/claude.dart';
+import 'package:flutter_test_playground/claude/adjusted.dart';
 
 // Import your HomePage file
 
