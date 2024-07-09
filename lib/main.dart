@@ -1,88 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test_playground/claude/adjusted.dart';
-
-// Import your HomePage file
+import 'package:flutter_test_playground/claude/bottom_nav.dart';
+import 'package:flutter_test_playground/claude/explore.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'My App',
       debugShowCheckedModeBanner: false,
-      title: 'Your App Title', // Replace with your app's name
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(), // Make HomePage the initial route
+      home: const MainPage(),
     );
   }
 }
 
+class MainPage extends StatefulWidget {
+  const MainPage({Key? key}) : super(key: key);
 
-// import 'package:flutter/material.dart';
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
 
-// void main() {
-//   runApp(MyApp());
-// }
+class _MainPageState extends State<MainPage> {
+  int _selectedIndex = 0;
 
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: HomePage(),
-//     );
-//   }
-// }
+  static const List<Widget> _pages = <Widget>[
+    HomePage(),
+    ExplorePage(),
+    Placeholder(), // Placeholder for Favorites page
+    Placeholder(), // Placeholder for Profile page
+  ];
 
-// class HomePage extends StatefulWidget {
-//   @override
-//   _HomePageState createState() => _HomePageState();
-// }
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
-// class _HomePageState extends State<HomePage> {
-//   PageController _pageController = PageController();
-//   double _currentPage = 0;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _pageController.addListener(() {
-//       setState(() {
-//         _currentPage = _pageController.page ?? 0;
-//       });
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: PageView.builder(
-//         controller: _pageController,
-//         itemCount: 5, // Number of pages
-//         itemBuilder: (context, index) {
-//           double opacity = (1 - (_currentPage - index).abs()).clamp(0.0, 1.0);
-//           return Center(
-//             child: AnimatedOpacity(
-//               opacity: opacity,
-//               duration: Duration(milliseconds: 300),
-//               child: Container(
-//                 color: Colors.blue,
-//                 child: Center(
-//                   child: Text(
-//                     'Page $index',
-//                     style: TextStyle(fontSize: 32, color: Colors.white),
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigation(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
+    );
+  }
+}
