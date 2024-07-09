@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test_playground/claude/bottom_nav.dart';
+import 'package:video_player/video_player.dart';
 
 class Location {
   final String title;
   final String subtitle;
   final String distance;
   final List<String> imagePaths;
+  final String? videoUrl;
 
   Location({
     required this.title,
     required this.subtitle,
     required this.distance,
     required this.imagePaths,
+    this.videoUrl,
   });
 }
 
@@ -27,16 +30,27 @@ class _HomePageState extends State<HomePage> {
   late ScrollController _scrollController;
   late double _itemHeight;
   int _currentIndex = 0;
+  VideoPlayerController? _videoPlayerController;
 
   final List<Location> _locations = [
     Location(
+      title: 'Featured Video',
+      subtitle: 'Watch our featured content',
+      distance: 'Online',
+      imagePaths: [
+        'assets/images/pic_6.jpeg',
+        'assets/images/pic_7.jpeg',
+      ],
+      videoUrl: 'assets/videos/vid_2.mp4',
+    ),
+    Location(
       title: 'Hokkaido Ramen Santouka',
       subtitle: 'Santouka',
-      distance: '800 meters',
+      distance: '80 meters',
       imagePaths: [
-        'assets/images/home_pic_1.jpeg',
-        'assets/images/home_pic_2.jpeg',
-        'assets/images/home_pic_3.jpeg',
+        'assets/images/pic_1.jpeg',
+        'assets/images/pic_2.jpeg',
+        'assets/images/pic_3.jpeg',
       ],
     ),
     Location(
@@ -44,8 +58,8 @@ class _HomePageState extends State<HomePage> {
       subtitle: 'Japanese Cuisine',
       distance: '1.2 km',
       imagePaths: [
-        'assets/images/home_pic_4.jpeg',
-        'assets/images/home_pic_5.jpeg',
+        'assets/images/pic_4.jpeg',
+        'assets/images/pic_5.jpeg',
       ],
     ),
   ];
@@ -54,11 +68,25 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _scrollController = ScrollController()..addListener(_scrollListener);
+    _initializeVideoPlayer();
+  }
+
+  void _initializeVideoPlayer() {
+    if (_locations.isNotEmpty && _locations[0].videoUrl != null) {
+      _videoPlayerController =
+          VideoPlayerController.asset(_locations[0].videoUrl!)
+            ..initialize().then((_) {
+              setState(() {});
+              _videoPlayerController!.play();
+              _videoPlayerController!.setLooping(true);
+            });
+    }
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _videoPlayerController?.dispose();
     super.dispose();
   }
 
@@ -156,7 +184,9 @@ class _HomePageState extends State<HomePage> {
         children: [
           Expanded(
             flex: 6,
-            child: _buildImageCarousel(location.imagePaths),
+            child: location.videoUrl != null
+                ? _buildVideoPlayer(location.videoUrl!)
+                : _buildImageCarousel(location.imagePaths),
           ),
           Expanded(
             flex: 4,
@@ -183,6 +213,16 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  Widget _buildVideoPlayer(String videoUrl) {
+    return _videoPlayerController != null &&
+            _videoPlayerController!.value.isInitialized
+        ? AspectRatio(
+            aspectRatio: _videoPlayerController!.value.aspectRatio,
+            child: VideoPlayer(_videoPlayerController!),
+          )
+        : const Center(child: CircularProgressIndicator());
   }
 
   Widget _buildImageCarousel(List<String> imagePaths) {
