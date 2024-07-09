@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'claude/claude_zooming.dart';
+import 'claude/claude.dart';
+
 // Import your HomePage file
 
 void main() {
