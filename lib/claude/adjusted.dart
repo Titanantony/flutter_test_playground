@@ -201,10 +201,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      // bottomNavigationBar: BottomNavigation(
-      //   selectedIndex: _selectedIndex,
-      //   onItemTapped: _onItemTapped,
-      // ),
     );
   }
 
@@ -325,13 +321,15 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 8), // Add space between text and icons
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           IconButton(
+                            iconSize:
+                                30, // Adjust this value to the desired icon size
                             icon: Icon(
                               location.isLiked
                                   ? Icons.favorite
@@ -358,19 +356,37 @@ class _HomePageState extends State<HomePage> {
                             ),
                         ],
                       ),
-                      const SizedBox(
-                          height: 4), // Space between like and save buttons
                       IconButton(
+                        iconSize:
+                            30, // Adjust this value to the desired icon size
                         icon: Icon(
                           location.isSaved
                               ? Icons.bookmark
                               : Icons.bookmark_border,
-                          color: location.isSaved ? Colors.blue : null,
+                          color: location.isSaved ? Colors.blue : Colors.grey,
                         ),
                         onPressed: () {
-                          // Handle save action
+                          setState(() {
+                            location.isSaved = !location.isSaved;
+                            if (location.isSaved) {
+                              location.savedCount++;
+                            } else {
+                              location.savedCount--;
+                            }
+                          });
                         },
                       ),
+                      // IconButton(
+                      //   iconSize:
+                      //       20, // Adjust this value to the desired icon size
+                      //   icon: const Icon(
+                      //     Icons.share_outlined,
+                      //     color: Colors.blue,
+                      //   ),
+                      //   onPressed: () {
+                      //     location.sharedCount++;
+                      //   },
+                      // ),
                     ],
                   ),
                 ],
