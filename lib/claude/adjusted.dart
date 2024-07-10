@@ -8,6 +8,7 @@ class Location {
   final List<String> imagePaths;
   final bool isLiked;
   final bool isSaved;
+  final bool isOpen;
   final String description;
   final String type;
 
@@ -20,6 +21,7 @@ class Location {
     required this.isSaved,
     required this.description,
     required this.type,
+    required this.isOpen,
   });
 }
 
@@ -50,19 +52,24 @@ class _HomePageState extends State<HomePage> {
       isSaved: false,
       description: 'Authentic Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
+      isOpen: true,
     ),
     Location(
-      title: 'Sushi Roku',
-      subtitle: 'Japanese Cuisine',
-      distance: '1.2 km',
+      title:
+          'Sushi Roku  Japanese ramen with rich, flavorful broth Japanese ramen with rich, flavorful broth',
+      subtitle:
+          'Japanese Cuisine Japanese ramen with rich, flavorful broth Japanese ramen with rich, flavorful broth',
+      distance: '1.3 km',
       imagePaths: [
         'assets/images/pic_4.jpeg',
         'assets/images/pic_5.jpeg',
       ],
       isLiked: true,
       isSaved: false,
-      description: 'Authentic Japanese ramen with rich, flavorful broth',
+      description:
+          'Authentic Japanese ramen with rich, flavorful broth Japanese ramen with rich, flavorful broth Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
+      isOpen: false,
     ),
     Location(
       title: 'Hokkaido Ramen Santouka',
@@ -77,6 +84,7 @@ class _HomePageState extends State<HomePage> {
       isSaved: false,
       description: 'Authentic Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
+      isOpen: true,
     ),
     Location(
       title: 'Hokkaido Ramen Santouka',
@@ -91,6 +99,7 @@ class _HomePageState extends State<HomePage> {
       isSaved: false,
       description: 'Authentic Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
+      isOpen: false,
     ),
     Location(
       title: 'Hokkaido Ramen Santouka',
@@ -101,10 +110,11 @@ class _HomePageState extends State<HomePage> {
         'assets/images/pic_13.jpeg',
         'assets/images/pic_14.jpeg',
       ],
-      isLiked: true,
-      isSaved: false,
+      isLiked: false,
+      isSaved: true,
       description: 'Authentic Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
+      isOpen: true,
     ),
     Location(
       title: 'Hokkaido Ramen Santouka',
@@ -118,6 +128,7 @@ class _HomePageState extends State<HomePage> {
       isSaved: false,
       description: 'Authentic Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
+      isOpen: true,
     ),
   ];
 
@@ -233,43 +244,90 @@ class _HomePageState extends State<HomePage> {
             flex: 3,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    location.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          location.title,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          location.subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          location.description,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(
+                              location.isOpen
+                                  ? Icons.access_time_filled
+                                  : Icons.access_time,
+                              color:
+                                  location.isOpen ? Colors.green : Colors.red,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              location.isOpen ? "Open" : "Closed",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on, size: 16),
+                            Flexible(
+                              child: Text(
+                                location.distance,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  Text(location.subtitle),
-                  Row(
+                  const SizedBox(width: 8), // Add space between text and icons
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.location_on, size: 16),
-                      Text(location.distance),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        location.isLiked
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        color: location.isLiked ? Colors.red : null,
+                      IconButton(
+                        icon: Icon(
+                          location.isLiked
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: location.isLiked ? Colors.red : null,
+                        ),
+                        onPressed: () {
+                          // Handle like action
+                        },
                       ),
-                      const SizedBox(width: 8),
-                      Icon(
-                        location.isSaved
-                            ? Icons.bookmark
-                            : Icons.bookmark_border,
-                        color: location.isSaved ? Colors.blue : null,
+                      IconButton(
+                        icon: Icon(
+                          location.isSaved
+                              ? Icons.bookmark
+                              : Icons.bookmark_border,
+                          color: location.isSaved ? Colors.blue : null,
+                        ),
+                        onPressed: () {
+                          // Handle save action
+                        },
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    location.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
