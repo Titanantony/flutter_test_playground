@@ -6,11 +6,14 @@ class Location {
   final String subtitle;
   final String distance;
   final List<String> imagePaths;
-  final bool isLiked;
-  final bool isSaved;
+  bool isLiked;
+  bool isSaved;
   final bool isOpen;
   final String description;
   final String type;
+  int likesCount;
+  int sharedCount;
+  int savedCount;
 
   Location({
     required this.title,
@@ -22,6 +25,9 @@ class Location {
     required this.description,
     required this.type,
     required this.isOpen,
+    required this.likesCount,
+    required this.sharedCount,
+    required this.savedCount,
   });
 }
 
@@ -53,6 +59,9 @@ class _HomePageState extends State<HomePage> {
       description: 'Authentic Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
       isOpen: true,
+      likesCount: 1,
+      savedCount: 0,
+      sharedCount: 0,
     ),
     Location(
       title:
@@ -64,12 +73,15 @@ class _HomePageState extends State<HomePage> {
         'assets/images/pic_4.jpeg',
         'assets/images/pic_5.jpeg',
       ],
-      isLiked: true,
+      isLiked: false,
       isSaved: false,
       description:
           'Authentic Japanese ramen with rich, flavorful broth Japanese ramen with rich, flavorful broth Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
       isOpen: false,
+      likesCount: 0,
+      savedCount: 0,
+      sharedCount: 0,
     ),
     Location(
       title: 'Hokkaido Ramen Santouka',
@@ -85,6 +97,9 @@ class _HomePageState extends State<HomePage> {
       description: 'Authentic Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
       isOpen: true,
+      likesCount: 0,
+      savedCount: 0,
+      sharedCount: 0,
     ),
     Location(
       title: 'Hokkaido Ramen Santouka',
@@ -100,6 +115,9 @@ class _HomePageState extends State<HomePage> {
       description: 'Authentic Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
       isOpen: false,
+      likesCount: 0,
+      savedCount: 0,
+      sharedCount: 0,
     ),
     Location(
       title: 'Hokkaido Ramen Santouka',
@@ -115,6 +133,9 @@ class _HomePageState extends State<HomePage> {
       description: 'Authentic Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
       isOpen: true,
+      likesCount: 5,
+      savedCount: 0,
+      sharedCount: 0,
     ),
     Location(
       title: 'Hokkaido Ramen Santouka',
@@ -129,6 +150,9 @@ class _HomePageState extends State<HomePage> {
       description: 'Authentic Japanese ramen with rich, flavorful broth',
       type: 'Restaurant',
       isOpen: true,
+      likesCount: 0,
+      savedCount: 0,
+      sharedCount: 0,
     ),
   ];
 
@@ -305,17 +329,37 @@ class _HomePageState extends State<HomePage> {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        icon: Icon(
-                          location.isLiked
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: location.isLiked ? Colors.red : null,
-                        ),
-                        onPressed: () {
-                          // Handle like action
-                        },
+                      Column(
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              location.isLiked
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: location.isLiked ? Colors.red : null,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                location.isLiked = !location.isLiked;
+                                if (location.isLiked) {
+                                  location.likesCount++;
+                                } else {
+                                  location.likesCount--;
+                                }
+                              });
+                            },
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                          if (location.likesCount > 0)
+                            Text(
+                              '${location.likesCount}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                        ],
                       ),
+                      const SizedBox(
+                          height: 4), // Space between like and save buttons
                       IconButton(
                         icon: Icon(
                           location.isSaved
