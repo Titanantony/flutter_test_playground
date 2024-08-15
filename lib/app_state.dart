@@ -178,8 +178,8 @@ class PlaceCard extends StatelessWidget {
     return Card(
       child: Column(
         children: [
-          Image.asset('assets/images/pic_2.jpeg',
-              height: 100, fit: BoxFit.cover),
+          Image.asset('assets/images/pic_3.jpeg',
+              height: 120, fit: BoxFit.cover),
           const Text('Place Name'),
           const Text('Location'),
           const Row(
